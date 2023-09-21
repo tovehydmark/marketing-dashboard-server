@@ -6,23 +6,38 @@ var cors = require('cors');
 const app = express();
 const port = 5000;
 
+const { graphqlHTTP } = require('express-graphql');
+const { buildSchema } = require('graphql');
+
 app.use(cors());
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
-//Connect server and client
-app.get('/', (req: Request, res: Response) => {
-  res.json({ express: 'Your Express backend is connected to Client' });
-});
+// Construct a schema for currencies
+var schema = buildSchema(`
+  type Query {
+    currency: [String]
+  }
+`);
 
-//Get the order data
-app.get('/data', (req: Request, res: Response) => {
-  //Convert the csv data to jSON
-  const csvFilePath = __dirname + '/data/data.csv';
-  const csv = require('csvtojson');
-  csv()
-    .fromFile(csvFilePath)
-    .then((jsonObj: Order) => {
-      //Return order data in JSON format
-      res.send(jsonObj);
+var root = {
+  currency: async () => {
+    //Convert the csv data to jSON
+    const csvFilePath = __dirname + '/data/data.csv';
+    const csv = require('csvtojson');
+    const data = await csv().fromFile(csvFilePath);
+
+    const getCurrencies = data.map((currencies: Order) => {
+      return currencies.currency;
     });
-});
+    return getCurrencies;
+  },
+};
+
+app.use(
+  '/graphql',
+  graphqlHTTP({
+    schema: schema,
+    rootValue: root,
+    graphiql: true,
+  }),
+);
