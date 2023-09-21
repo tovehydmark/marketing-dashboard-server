@@ -15,21 +15,21 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 // Construct a schema for currencies
 var schema = buildSchema(`
   type Query {
-    currency: [String]
+    channel: [String]
   }
 `);
 
 var root = {
-  currency: async () => {
+  channel: async () => {
     //Convert the csv data to jSON
     const csvFilePath = __dirname + '/data/data.csv';
     const csv = require('csvtojson');
     const data = await csv().fromFile(csvFilePath);
 
-    const getCurrencies = data.map((currencies: Order) => {
-      return currencies.currency;
+    const getChannels = data.map((channels: Order) => {
+      return channels.channel;
     });
-    return getCurrencies;
+    return getChannels;
   },
 };
 
