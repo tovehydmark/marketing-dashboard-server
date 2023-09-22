@@ -32,11 +32,22 @@ var schema = buildSchema(`
 var root = {
   channel: async () => {
     const data = await convertDatasetToJson();
+
     const getChannels = data.map((channels: Order) => {
       return channels.channel;
     });
-    return getChannels;
+
+    //Returns unique values from given array
+    function uniqueValues(value: any, index: number, array: any) {
+      return array.indexOf(value) === index;
+    }
+
+    //Returns all possible values within the channels array
+    var possibleValues = getChannels.filter(uniqueValues);
+
+    return possibleValues;
   },
+
   channelGroup: async () => {
     const data = await convertDatasetToJson();
     const getChannegroups = data.map((channelGroups: Order) => {
