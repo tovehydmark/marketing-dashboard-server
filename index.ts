@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { Order } from './models/Order';
 
 const express = require('express');
-var cors = require('cors');
+const cors = require('cors');
 const app = express();
 const port = 5000;
 
@@ -21,7 +21,7 @@ const convertDatasetToJson = async () => {
 };
 
 // Construct a schema for the data to be fetched
-var schema = buildSchema(`
+const schema = buildSchema(`
   type Query {
     channel: [String]
     channelGroup:[String]
@@ -29,7 +29,7 @@ var schema = buildSchema(`
   }
 `);
 
-var root = {
+const root = {
   channel: async () => {
     const data = await convertDatasetToJson();
 
@@ -37,23 +37,15 @@ var root = {
       return channels.channel;
     });
 
-    //Returns unique values from given array
-    function uniqueValues(value: any, index: number, array: any) {
-      return array.indexOf(value) === index;
-    }
-
-    //Returns all possible values within the channels array
-    var possibleValues = getChannels.filter(uniqueValues);
-
-    return possibleValues;
+    return getChannels;
   },
 
   channelGroup: async () => {
     const data = await convertDatasetToJson();
-    const getChannegroups = data.map((channelGroups: Order) => {
+    const getChannelgroups = data.map((channelGroups: Order) => {
       return channelGroups.channelGroup;
     });
-    return getChannegroups;
+    return getChannelgroups;
   },
   campaign: async () => {
     const data = await convertDatasetToJson();
