@@ -1,4 +1,3 @@
-import { Request, Response } from 'express';
 import { Order } from './models/Order';
 
 const express = require('express');
